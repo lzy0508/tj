@@ -192,7 +192,7 @@ function useState(initial) {
     }
 
     const actions = oldHook ? oldHook.queue : []
-    console.log('-----------------', actions)
+    // ! when new render call 
     actions.forEach((action) => {
         hook.state = action(hook.state)
     })
@@ -204,6 +204,7 @@ function useState(initial) {
             props: currentRoot.props,
             alternate: currentRoot,
         }
+        //! trigger render 触发视图更新的原动力
         nextUnitOfWork = wipRoot
         deletions = []
     }
@@ -221,19 +222,17 @@ function updateHostComponent(fiber) {
 }
 
 function reconcileChildren(wipFiber, elements) {
-    // TODO add dom node
     let index = 0
     let oldFiber = wipFiber.alternate && wipFiber.alternate.child
     let prevSibling = null
+
     while (index < elements.length || oldFiber != null) {
         const element = elements[index]
         let newFiber = null
-        // TODO compare oldFiber to element
 
-        const sameType = oldFiber && element && element.type === oldFiber.type
+        const sameType = oldFiber && element && element.type == oldFiber.type
 
         if (sameType) {
-            // TODO update the node
             newFiber = {
                 type: oldFiber.type,
                 props: element.props,
@@ -243,9 +242,7 @@ function reconcileChildren(wipFiber, elements) {
                 effectTag: 'UPDATE',
             }
         }
-
         if (element && !sameType) {
-            // TODO add the node
             newFiber = {
                 type: element.type,
                 props: element.props,
@@ -255,11 +252,13 @@ function reconcileChildren(wipFiber, elements) {
                 effectTag: 'PLACEMENT',
             }
         }
-
         if (oldFiber && !sameType) {
-            // TODO delete the OldFiber's node
             oldFiber.effectTag = 'DELETION'
             deletions.push(oldFiber)
+        }
+
+        if (oldFiber) {
+            oldFiber = oldFiber.sibling
         }
 
         if (index === 0) {
