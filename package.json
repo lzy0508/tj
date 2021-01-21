@@ -1,6 +1,14 @@
 {
   "name": "build-own-react",
   "version": "1.0.0",
+  "scripts": {
+    "build": "copyfiles -a src/**.js index.html build",
+    "clean": "rm -rf build"
+  },
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "rimraf": "^3.0.2"
+  }
 }
